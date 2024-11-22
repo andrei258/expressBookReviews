@@ -40,27 +40,16 @@ regd_users.post("/login", (req, res) => {
 
 // Add or modify a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  const { review } = req.query;
-  const { isbn } = req.params;
-  if (!review) {
-    return res.status(400).json({ message: "Review text is required" });
-  }
-
-  if (!books[isbn]) {
-    return res.status(404).json({ message: "Book not found" });
-  }
-
-  const token = req.header("Authorization");
-
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
-  jwt.verify(token, secretKey, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Invalid or expired token" });
+    const { review } = req.query;
+    const { isbn } = req.params;
+    const username = req.user.username;
+    if (!review) {
+        return res.status(400).json({ message: "Review text is required" });
     }
-    const username = decoded.username;
 
+    if (!books[isbn]) {
+        return res.status(404).json({ message: "Book not found" });
+    }
     if (!books[isbn].reviews) {
       books[isbn].reviews = {};
     }
@@ -72,7 +61,6 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
       books[isbn].reviews[username] = review;
       return res.status(201).json({ message: "Review added by: " + username });
     }
-  });
 });
 
 // Delete a book
