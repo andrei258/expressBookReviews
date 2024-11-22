@@ -1,1 +1,1 @@
-# coding-project-template
+# repo for the review on Coursera
